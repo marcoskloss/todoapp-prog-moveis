@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { router } from 'expo-router';
 
 export default function Login() {
   const [user, setUser] = useState('')
@@ -11,7 +12,7 @@ export default function Login() {
       return
     }
 
-    // TODO login...
+    router.push('/todos')
   }
   
   return (
@@ -28,6 +29,7 @@ export default function Login() {
         value={pass}
         onChangeText={txt => setPass(txt)}
         style={styles.input}
+        secureTextEntry
       />
       <Button title='Entrar' onPress={handleLogin} />
     </View>

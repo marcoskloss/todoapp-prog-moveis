@@ -4,6 +4,7 @@
     "slug": "todo-prog-moveis",
     "version": "1.0.0",
     "orientation": "portrait",
+    "scheme": "app-scheme",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
