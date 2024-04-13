@@ -7,10 +7,10 @@ export default function Login() {
   const [pass, setPass] = useState('')
 
   const handleLogin = () => {
-    if (!user || !pass) {
-      alert('Informe usuário e senha >:(')
-      return
-    }
+    // if (!user || !pass) {
+    //   alert('Informe usuário e senha >:(')
+    //   return
+    // }
 
     router.push('/todos')
   }
