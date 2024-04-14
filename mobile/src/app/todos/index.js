@@ -1,33 +1,16 @@
-import { Alert, FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Alert, Button, FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import { router } from "expo-router";
+import TagService from '../../backend/services/tag'
+import AuthService from '../../backend/services/auth'
+import TaskService from '../../backend/services/task'
+import { useEffect, useState } from "react";
 
-const todos = [
-  {id: 1, description: 'lavar a louca', completed: false},
-  {id: 2, description: 'fazer tal coisa', completed: true},
-  {id: 3, description: 'abastecer carro', completed: false},
-  {id: 5, description: 'comprar fosforo', completed: true},
-  {id: 6, description: 'comprar carvao', completed: false},
-  {id: 7, description: 'levar o cachorro passear', completed: false},
-  {id: 8, description: 'fazer alguma coisa', completed: true},
-  {id: 9, description: 'fazer TDE de prog movel', completed: true},
-  {id: 10, description: 'fazer outro TDE', completed: true},
-  {id: 11, description: 'dormir?', completed: true},
-]
-
-const Item = ({id, description, onUpdate, onDelete}) => {
-  return (
-    <View style={styles.item}>
-      <Text style={styles.description}>{description}</Text>
-      <View style={{ flexDirection: 'row', gap: 16 }}>
-        <Feather name="edit" size={24} color="black" onPress={() => onUpdate(id)} />
-        <Feather name="trash" size={24} color="black" onPress={() => onDelete(id)} />
-      </View>
-    </View>
-  );
-}
+export const USER_ID = 1
 
 export default function Todos() {
+  const [todos, setTodos] = useState([])
+  
   const handleUpdateTodo = (id) => {
     router.push(`/todos/${id}`)
   }
@@ -36,29 +19,70 @@ export default function Todos() {
     Alert.alert('Conrirmação', 'Deseja apagar essa tarefa?', [
       {
         text: 'Não',
-        onPress: () => console.log('Cancel Pressed'),
         style: 'cancel',
       },
-      {text: 'Sim', onPress: () => console.log('OK Pressed')},
+      {
+        text: 'Sim', 
+        onPress: () => {
+          TaskService.deleteTask(id, USER_ID).then(findAndSetTodos)
+        }
+      },
     ]);
   }
-  
+
+  const findAndSetTodos = async () => {
+    TaskService.findAll(USER_ID).then(response => {
+      setTodos(response.data)
+    })
+  }
+
+  useEffect(() => {
+    findAndSetTodos()
+  }, [])
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Tarefas</Text>
+
+      <View style={{ flexDirection: 'row' }}>
+        <Button title="Nova tarefa" onPress={() => router.push('/todos/new')} />
+        <Button title="Nova tag" onPress={() => router.push('/todos/tag')} />
+      </View>
+
       <FlatList
         data={todos}
         renderItem={({item}) => <Item 
-          description={item.description}
-          id={item.id}  
+          description={item.DESCRIPTION}
+          id={item.ID}  
+          completed={item.COMPLETED}
           onUpdate={handleUpdateTodo}
           onDelete={handleDeleteTodo}
         />}
-        keyExtractor={item => item.id}
+        ListEmptyComponent={<Text>Vc nao tem nenhuma tarefa :)</Text>}
+        keyExtractor={item => item.ID}
         style={styles.list}
       />
+
     </SafeAreaView>
   )
+}
+
+const Item = ({id, description, completed, onUpdate, onDelete}) => {
+  return (
+    <View style={styles.item}>
+      <Text style={{
+        fontSize: 16,
+        textDecorationLine: completed ? 'line-through' : 'none',
+        color: completed ? 'gray' : 'black',
+      }}>
+        {description}
+      </Text>
+      <View style={{ flexDirection: 'row', gap: 16 }}>
+        <Feather name="edit" size={24} color="black" onPress={() => onUpdate(id)} />
+        <Feather name="trash" size={24} color="black" onPress={() => onDelete(id)} />
+      </View>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -83,7 +107,5 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderBottomWidth: 1,
   },
-  description: {
-    fontSize: 16,
-  },
+  itemCompleted: {textDecorationLine: 'line-through', textDecorationStyle: 'solid'}
 });

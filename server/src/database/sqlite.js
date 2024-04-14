@@ -20,7 +20,7 @@ const sqliteInstance = (() => {
     }
     catch {
       await instance.exec(
-`CREATE TABLE USER (
+`CREATE TABLE IF NOT EXISTS USER (
   ID INTEGER PRIMARY KEY,
   USERNAME TEXT NOT NULL,
   PASSWORD TEXT NOT NULL
@@ -34,7 +34,7 @@ const sqliteInstance = (() => {
     }
     catch {
       await instance.exec(
-`CREATE TABLE TASK (
+`CREATE TABLE IF NOT EXISTS TASK (
   ID INTEGER PRIMARY KEY,
   DESCRIPTION TEXT NOT NULL,
   COMPLETED TEXT NOT NULL DEFAULT 'N',
@@ -51,7 +51,7 @@ const sqliteInstance = (() => {
     }
     catch {
       await instance.exec(
-`CREATE TABLE TAG (
+`CREATE TABLE IF NOT EXISTS TAG (
   ID INTEGER PRIMARY KEY,
   NAME TEXT NOT NULL,
   USER_ID INTEGER NOT NULL,

@@ -1,41 +1,47 @@
-import { Link, router, useLocalSearchParams } from "expo-router";
+import { Link, router } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
-import Checkbox from 'expo-checkbox';
 import TaskService from '../../backend/services/task'
+import TagService from '../../backend/services/tag'
 import { USER_ID } from ".";
+import { Picker } from '@react-native-picker/picker';
 
-export default function Todo() {
-  const params = useLocalSearchParams()
-  
+export default function NewTodo() {
   const [description, setDescription] = useState('')
-  const [completed, setCompleted] = useState(false)
-  const [tag, setTag] = useState('')
+  const [tagId, setTagId] = useState(1)
+  const [tags, setTags] = useState([])
 
-  const handleUpdateTask = async () => {
+  const handleCreateTask = async () => {
     if (!description) {
       alert('Informe uma descricao!')
       return
     }
 
-    TaskService.updateTask(params.id, USER_ID, description, completed)
+    if (!tagId) {
+      alert('Selecione uma tag!')
+      return
+    }
+
+    TaskService.create(description, tagId, USER_ID)
       .then(() => router.push('/todos'))
-      .catch((ex) => alert(ex))
+      .catch(alert)
   }
 
   useEffect(() => {
-    if (!params.id) return
-    TaskService.findOne(params.id, USER_ID).then(response => {
-      setDescription(response.data.DESCRIPTION)
-      setCompleted(response.data.COMPLETED)
-      setTag(response.data.TAG.NAME)
-    })
-  }, [params.id])
-  
+    TagService.findAll(USER_ID)
+      .then(response => {
+        if (response.data.length === 0) {
+          alert('Vc nao tem nenhuma Tag cadastrada ainda :(, cadastre agora!')
+          router.push('/todos/tag')
+        } else {
+          setTags(response.data)
+        }
+      })
+  }, [])
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Edição de tarefa</Text>
-      <Text>Tarefa de ID: {params.id}</Text>
+      <Text style={styles.title}>Nova tarefa</Text>
 
       <View style={styles.field}>
         <Text>Descrição</Text>
@@ -49,28 +55,23 @@ export default function Todo() {
       </View>
 
       <View style={styles.field}>
-        <Text>Tag (não editável)</Text>
+        <Text>Tag</Text>
         
-        <TextInput 
-          value={tag}
-          style={{ ...styles.input, color: 'gray', borderColor: 'gray', backgroundColor: '#f3f3f3' }}
-          readOnly
-        />
+        <Picker
+          style={styles.input}
+          selectedValue={tagId}
+          onValueChange={(itemValue) => setTagId(itemValue)}
+        >
+          {tags.map(tag => (
+            <Picker.Item key={tag.ID} label={tag.NAME} value={tag.ID} />
+          ))}
+        </Picker>
       </View>
 
-      <View style={styles.field}>
-        <Text>Finalizada</Text>
-        <Checkbox
-          style={styles.checkbox}
-          value={completed}
-          onValueChange={setCompleted}
-          color={completed ? '#4630EB' : undefined}
-        />
-      </View>
-
+      
       <View style={styles.buttons}>
         <Link href="/todos" style={styles.back}>Voltar</Link>
-        <Button title="Salvar" style={styles.save} onPress={handleUpdateTask} />
+        <Button title="Salvar" style={styles.save} onPress={handleCreateTask} />
       </View>
     </SafeAreaView>
   )

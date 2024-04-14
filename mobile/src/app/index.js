@@ -1,18 +1,25 @@
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { router } from 'expo-router';
+import AuthService from '../backend/services/auth'
 
 export default function Login() {
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
 
-  const handleLogin = () => {
-    // if (!user || !pass) {
-    //   alert('Informe usuário e senha >:(')
-    //   return
-    // }
+  const handleLogin = async () => {
+    if (!user || !pass) {
+      alert('Informe usuário e senha!')
+      return
+    }
 
-    router.push('/todos')
+    try {
+      await AuthService.authUser(user, pass)
+      router.push('/todos')
+    } catch (ex) {
+      alert('Usuário ou senha inválidos!')
+      console.log(ex)
+    }
   }
   
   return (
