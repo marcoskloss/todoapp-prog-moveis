@@ -1,18 +1,17 @@
 import { Alert, Button, FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Feather } from '@expo/vector-icons';
-import { router } from "expo-router";
-import TagService from '../../backend/services/tag'
-import AuthService from '../../backend/services/auth'
-import TaskService from '../../backend/services/task'
+import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-
-export const USER_ID = 1
+import TaskService from '../../../backend/services/task'
 
 export default function Todos() {
   const [todos, setTodos] = useState([])
+  const params = useLocalSearchParams()
+
+  const userId = Number(params.userId)
   
   const handleUpdateTodo = (id) => {
-    router.push(`/todos/${id}`)
+    router.push(`${userId}/todos/${id}`)
   }
 
   const handleDeleteTodo = (id) => {
@@ -24,14 +23,14 @@ export default function Todos() {
       {
         text: 'Sim', 
         onPress: () => {
-          TaskService.deleteTask(id, USER_ID).then(findAndSetTodos)
+          TaskService.deleteTask(id, userId).then(findAndSetTodos)
         }
       },
     ]);
   }
 
   const findAndSetTodos = async () => {
-    TaskService.findAll(USER_ID).then(response => {
+    TaskService.findAll(userId).then(response => {
       setTodos(response.data)
     })
   }
@@ -45,8 +44,8 @@ export default function Todos() {
       <Text style={styles.title}>Tarefas</Text>
 
       <View style={{ flexDirection: 'row' }}>
-        <Button title="Nova tarefa" onPress={() => router.push('/todos/new')} />
-        <Button title="Nova tag" onPress={() => router.push('/todos/tag')} />
+        <Button title="Nova tarefa" onPress={() => router.push(`${userId}/todos/new`)} />
+        <Button title="Nova tag" onPress={() => router.push(`${userId}/todos/tag`)} />
       </View>
 
       <FlatList

@@ -3,28 +3,28 @@ import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Link, router } from 'expo-router';
 import AuthService from '../backend/services/auth'
 
-export default function Login() {
+export default function NewUser() {
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
 
-  const handleLogin = async () => {
-    if (!user || !pass) {
+  const handleCreateUser = async () => {
+    if (!user.trim() || !pass.trim()) {
       alert('Informe usuário e senha!')
       return
     }
 
     try {
-      const { data } = await AuthService.authUser(user, pass)
-      router.push(`${data.ID}/todos`)
+      const { data } = await AuthService.createUser(user, pass)
+      router.push(`/${data.ID}/todos`)
     } catch (ex) {
-      alert('Usuário ou senha inválidos!')
+      alert('deu ruim! :/')
       console.log(ex)
     }
   }
   
   return (
     <View style={styles.container}>
-      <Text>Login</Text>
+      <Text>Crie seu usuário</Text>
       <TextInput 
         placeholder='usuário'
         value={user}
@@ -38,9 +38,8 @@ export default function Login() {
         style={styles.input}
         secureTextEntry
       />
-      <Button title='Entrar' onPress={handleLogin} />
-      <Link href="/new-user">Não possui uma conta?</Link>
-      <Link href="/1/todos">teste</Link>
+      <Button title='Criar' onPress={handleCreateUser} />
+      <Link href="/">Voltar</Link>
     </View>
   );
 }

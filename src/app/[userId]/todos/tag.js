@@ -1,20 +1,23 @@
-import { Link, router } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
-import TagService from '../../backend/services/tag'
-import { USER_ID } from ".";
+import TagService from '../../../backend/services/tag'
 
 export default function NewTask() {
+  const params = useLocalSearchParams()
+
   const [name, setName] = useState('')
 
+  const userId = Number(params.userId)
+  
   const handleCreateTag = async () => {
-    if (!name) {
+    if (!name.trim()) {
       alert('Informe um nome!')
       return
     }
 
-    TagService.create(name, USER_ID)
-      .then(() => router.push('/todos'))
+    TagService.create(name, userId)
+      .then(() => router.push(`${userId}/todos`))
       .catch((ex) => alert(ex))
   }
 
@@ -34,7 +37,7 @@ export default function NewTask() {
       </View>
 
       <View style={styles.buttons}>
-        <Link href="/todos" style={styles.back}>Voltar</Link>
+        <Link href={`${userId}/todos`} style={styles.back}>Voltar</Link>
         <Button title="Salvar" style={styles.save} onPress={handleCreateTag} />
       </View>
     </SafeAreaView>

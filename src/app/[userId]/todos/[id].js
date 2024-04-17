@@ -2,8 +2,7 @@ import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import Checkbox from 'expo-checkbox';
-import TaskService from '../../backend/services/task'
-import { USER_ID } from ".";
+import TaskService from '../../../backend/services/task'
 
 export default function Todo() {
   const params = useLocalSearchParams()
@@ -12,20 +11,22 @@ export default function Todo() {
   const [completed, setCompleted] = useState(false)
   const [tag, setTag] = useState('')
 
+  const userId = Number(params.userId)
+
   const handleUpdateTask = async () => {
-    if (!description) {
+    if (!description.trim()) {
       alert('Informe uma descricao!')
       return
     }
 
-    TaskService.updateTask(params.id, USER_ID, description, completed)
-      .then(() => router.push('/todos'))
+    TaskService.updateTask(params.id, userId, description, completed)
+      .then(() => router.push(`${userId}/todos`))
       .catch((ex) => alert(ex))
   }
 
   useEffect(() => {
     if (!params.id) return
-    TaskService.findOne(params.id, USER_ID).then(response => {
+    TaskService.findOne(params.id, userId).then(response => {
       setDescription(response.data.DESCRIPTION)
       setCompleted(response.data.COMPLETED)
       setTag(response.data.TAG.NAME)
@@ -69,7 +70,7 @@ export default function Todo() {
       </View>
 
       <View style={styles.buttons}>
-        <Link href="/todos" style={styles.back}>Voltar</Link>
+        <Link href={`${userId}/todos`} style={styles.back}>Voltar</Link>
         <Button title="Salvar" style={styles.save} onPress={handleUpdateTask} />
       </View>
     </SafeAreaView>

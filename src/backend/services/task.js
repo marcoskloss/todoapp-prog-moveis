@@ -73,7 +73,6 @@ async function deleteTask(taskId, userId) {
     const db = await sqlite.getInstance();
 
     const sql = `DELETE FROM TASK WHERE ID = ? AND USER_ID = ?`;
-    console.log({sql})
     await db.sql(sql, [taskId, userId])
 
     return {

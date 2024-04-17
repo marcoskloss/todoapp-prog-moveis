@@ -1,18 +1,21 @@
-import { Link, router } from "expo-router";
+import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
-import TaskService from '../../backend/services/task'
-import TagService from '../../backend/services/tag'
-import { USER_ID } from ".";
+import TaskService from '../../../backend/services/task'
+import TagService from '../../../backend/services/tag'
 import { Picker } from '@react-native-picker/picker';
 
 export default function NewTodo() {
+  const params = useLocalSearchParams()
+  
   const [description, setDescription] = useState('')
   const [tagId, setTagId] = useState(1)
   const [tags, setTags] = useState([])
 
+  const userId = Number(params.userId)
+
   const handleCreateTask = async () => {
-    if (!description) {
+    if (!description.trim()) {
       alert('Informe uma descricao!')
       return
     }
@@ -22,22 +25,22 @@ export default function NewTodo() {
       return
     }
 
-    TaskService.create(description, tagId, USER_ID)
-      .then(() => router.push('/todos'))
+    TaskService.create(description, tagId, userId)
+      .then(() => router.push(`${userId}/todos`))
       .catch(alert)
   }
 
   useEffect(() => {
-    TagService.findAll(USER_ID)
+    TagService.findAll(userId)
       .then(response => {
         if (response.data.length === 0) {
           alert('Vc nao tem nenhuma Tag cadastrada ainda :(, cadastre agora!')
-          router.push('/todos/tag')
+          router.push(`${userId}/todos/tag`)
         } else {
           setTags(response.data)
         }
       })
-  }, [])
+  }, [userId])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -70,7 +73,7 @@ export default function NewTodo() {
 
       
       <View style={styles.buttons}>
-        <Link href="/todos" style={styles.back}>Voltar</Link>
+        <Link href={`${userId}/todos`} style={styles.back}>Voltar</Link>
         <Button title="Salvar" style={styles.save} onPress={handleCreateTask} />
       </View>
     </SafeAreaView>
