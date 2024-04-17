@@ -40,7 +40,6 @@ export default function Login() {
       />
       <Button title='Entrar' onPress={handleLogin} />
       <Link href="/new-user">Não possui uma conta?</Link>
-      <Link href="/1/todos">teste</Link>
     </View>
   );
 }
