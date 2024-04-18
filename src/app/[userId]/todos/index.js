@@ -43,7 +43,7 @@ export default function Todos() {
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Tarefas</Text>
 
-      <View style={{ flexDirection: 'row' }}>
+      <View style={{ flexDirection: 'row', gap: 8 }}>
         <Button title="Nova tarefa" onPress={() => router.push(`${userId}/todos/new`)} />
         <Button title="Nova tag" onPress={() => router.push(`${userId}/todos/tag`)} />
       </View>
