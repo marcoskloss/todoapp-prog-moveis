@@ -1,8 +1,8 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
-import TaskService from '../../../backend/services/task'
-import TagService from '../../../backend/services/tag'
+import TaskService from '../../../services/task'
+import TagService from '../../../services/tag'
 import { Picker } from '@react-native-picker/picker';
 
 export default function NewTodo() {

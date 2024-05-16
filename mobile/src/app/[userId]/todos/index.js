@@ -2,7 +2,7 @@ import { Alert, Button, FlatList, SafeAreaView, StyleSheet, Text, View } from "r
 import { Feather } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import TaskService from '../../../backend/services/task'
+import TaskService from '../../../services/task'
 
 export default function Todos() {
   const [todos, setTodos] = useState([])

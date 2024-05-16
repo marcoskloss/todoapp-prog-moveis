@@ -1,7 +1,7 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
-import TagService from '../../../backend/services/tag'
+import TagService from '../../../services/tag'
 
 export default function NewTask() {
   const params = useLocalSearchParams()

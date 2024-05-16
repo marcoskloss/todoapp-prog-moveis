@@ -2,7 +2,7 @@ import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import Checkbox from 'expo-checkbox';
-import TaskService from '../../../backend/services/task'
+import TaskService from '../../../services/task'
 
 export default function Todo() {
   const params = useLocalSearchParams()
