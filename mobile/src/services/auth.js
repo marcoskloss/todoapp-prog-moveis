@@ -1,4 +1,4 @@
-import sqlite from "../database/sqlite.js"
+import sqlite from "../backend/database/sqlite.js"
 
 async function getNextd() {
     const db = await sqlite.getInstance();
