@@ -2,24 +2,44 @@ import { useState } from 'react';
 import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Link, router } from 'expo-router';
 import AuthService from '../services/auth'
+import SunriseSunsetService from '../services/sunrise-sunset'
+import * as Location from 'expo-location';
+
 
 export default function Login() {
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
 
   const handleLogin = async () => {
-    if (!user || !pass) {
-      alert('Informe usuário e senha!')
+    // TODO colocar um emoji em tela se é dia ou noite
+    
+    const { status } = await Location.requestForegroundPermissionsAsync()
+
+    if (status !== 'granted') {
+      // sem acesso ao localizacao
+      alert(':(')
       return
     }
 
-    try {
-      const { data } = await AuthService.authUser(user, pass)
-      router.push(`${data.ID}/todos`)
-    } catch (ex) {
-      alert('Usuário ou senha inválidos!')
-      console.log(ex)
-    }
+    const { coords } = await Location.getCurrentPositionAsync()
+    // coords.latitude
+    // coords.longitude
+    
+    await SunriseSunsetService.getSunriseSunsetInfo(coords.latitude, coords.longitude)
+    
+    
+    // if (!user || !pass) {
+    //   alert('Informe usuário e senha!')
+    //   return
+    // }
+
+    // try {
+    //   const { data } = await AuthService.authUser(user, pass)
+    //   router.push(`${data.ID}/todos`)
+    // } catch (ex) {
+    //   alert('Usuário ou senha inválidos!')
+    //   console.log(ex)
+    // }
   }
   
   return (
