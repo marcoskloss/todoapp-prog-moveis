@@ -1,4 +1,5 @@
 import sqlite from "../database/sqlite.js"
+import tagService from "../services/tag.js"
 
 const db = await sqlite.getInstance();
 
@@ -10,6 +11,13 @@ async function getNextd() {
 }
 
 async function create(description, tagId, userId) {
+    if (tagId) {
+        tag = await tagService.findOne(tagId, userId)
+
+        if (!tag.data)
+            throw new Error("Tag not found")
+    }
+
     const nextId = await getNextd();
 
     const sql = `INSERT INTO TASK (ID, DESCRIPTION, TAG_ID, USER_ID) VALUES(${nextId}, '${description}', ${tagId ?? "NULL"} , ${userId})`
@@ -65,8 +73,13 @@ async function findAll(userId) {
 
 }
 
-async function findOne(taskId, userId){
+async function findOne(taskId, userId) {
     const result = await db.get(`SELECT  ID, DESCRIPTION, COMPLETED, TAG_ID, (SELECT NAME FROM TAG WHERE ID = TASK.TAG_ID) AS TAG_NAME FROM TASK WHERE ID = ${taskId} AND USER_ID = ${userId}`);
+
+    if (!result)
+        return {
+            data: null
+        }
 
     return {
         data: {
@@ -82,10 +95,59 @@ async function findOne(taskId, userId){
     }
 }
 
+async function updateTask(taskId, userId, description, tagId) {
+    let task = (await findOne(taskId, userId)).data; 
+
+    if (!task || !task.ID)
+        return {
+            message: "Task not found",
+            data: null
+        }
+        
+    let sql = `UPDATE TASK SET DESCRIPTION='${description}'`
+    
+    if (tagId){
+        const tag = await tagService.findOne(tagId, userId)
+    
+        if (!tag.data)
+            throw new Error("Tag not found")
+
+        sql += `, TAG_ID=${tagId}` 
+        task.TAG = tag.data
+    }
+    
+    sql += ` WHERE ID = ${taskId} AND USER_ID=${userId}` 
+
+    await db.exec(sql);
+
+    task.DESCRIPTION = description;
+
+    return {
+        data: task
+    }
+}
+
+async function deleteTask(taskId, userId) {
+    const task = await findOne(taskId, userId);
+
+    if (!task.data || !task.data.ID)
+        return {
+            message: "Task not found"
+        }
+
+    await db.exec(`DELETE FROM TASK WHERE ID = ${taskId} AND USER_ID=${userId}`);
+
+    return {
+        message: "Task deleted"
+    }
+}
+
 
 export default {
     create,
     completeTask,
     findAll,
-    findOne
+    findOne,
+    updateTask,
+    deleteTask
 }

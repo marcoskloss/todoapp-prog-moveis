@@ -9,6 +9,16 @@ async function authUser(body) {
     return service.authUser(username, password)
 }
 
+async function createUser(body) {
+    const { username, password } = body;
+
+    if (!username || !password)
+        throw new Error("Username and password are required")
+
+    return service.createUser(username, password)
+}
+
 export default {
-    authUser
+    authUser,
+    createUser
 }

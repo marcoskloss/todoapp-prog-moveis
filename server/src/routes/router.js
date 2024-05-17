@@ -12,6 +12,12 @@ router.post('/login', async (req, res) => {
     return res.json(result);
 })
 
+router.post('/signin', async (req, res) => {
+    const result = await authController.createUser(req.body);
+
+    return res.json(result);
+})
+
 
 router.use("/tasks", tasksRouter)
 

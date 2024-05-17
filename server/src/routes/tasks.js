@@ -26,6 +26,16 @@ tasksRouter.get("/:userId/find/:taskId", async (req, res) => {
 
     return res.json(result);
 })
+tasksRouter.post("/:userId/update/:taskId", async (req, res) => {
+    const result = await controller.updateTask(req.params, req.body);
+
+    return res.json(result);
+})
+tasksRouter.delete("/:userId/:taskId", async (req, res) => {
+    const result = await controller.deleteTask(req.params);
+
+    return res.json(result);
+})
 
 
 export default tasksRouter
