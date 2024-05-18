@@ -6,6 +6,8 @@ async function authUser(username, password) {
 }
 
 async function createUser(username, password) {
+  const response = await api.post('/signin', { username, password })
+  return response.data
 }
 
 export default {

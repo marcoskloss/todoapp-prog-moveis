@@ -33,4 +33,4 @@ mobile/.env*.local
 
 # typescript
 */*.tsbuildinfo
-*/server/tmp/database.db
+server/tmp

@@ -9,7 +9,7 @@ export default function NewTodo() {
   const params = useLocalSearchParams()
   
   const [description, setDescription] = useState('')
-  const [tagId, setTagId] = useState(1)
+  const [tagId, setTagId] = useState(null)
   const [tags, setTags] = useState([])
 
   const userId = Number(params.userId)
@@ -65,8 +65,10 @@ export default function NewTodo() {
           selectedValue={tagId}
           onValueChange={(itemValue) => setTagId(itemValue)}
         >
+          <Picker.Item label="selecione uma tag" value={null} enabled={false} color="#b3b3b3" />
+
           {tags.map(tag => (
-            <Picker.Item key={tag.ID} label={tag.NAME} value={tag.ID} />
+            <Picker.Item key={tag.ID} label={tag.NAME} value={tag.ID} color="#000"  />
           ))}
         </Picker>
       </View>

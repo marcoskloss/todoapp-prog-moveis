@@ -37,7 +37,7 @@ export default function Todos() {
 
   useEffect(() => {
     findAndSetTodos()
-  }, [])
+  }, [userId])
 
   return (
     <SafeAreaView style={styles.container}>

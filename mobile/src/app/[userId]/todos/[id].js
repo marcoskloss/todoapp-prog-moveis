@@ -31,7 +31,7 @@ export default function Todo() {
       setCompleted(response.data.COMPLETED)
       setTag(response.data.TAG.NAME)
     })
-  }, [params.id])
+  }, [params.id, userId])
   
   return (
     <SafeAreaView style={styles.container}>
