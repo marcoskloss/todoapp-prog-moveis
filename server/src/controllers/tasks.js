@@ -13,14 +13,6 @@ async function create(params, body) {
     let tag = tagId;
 
     let result = await service.create(description, tagId, userId);
-
-    result.data.TAG = tagId 
-    ? {
-        ID: tag.data.ID,
-        NAME: tag.data.NAME
-    }
-    : null
-
     return result
 }
 
@@ -59,18 +51,18 @@ async function findOne(params) {
 
 async function updateTask(params, body) {
     const { userId, taskId } = params
-    const { description, tagId } = body
+    const { description, completed } = body
 
     if (!userId)
         throw new Error("User are required")
 
-    if (!taskId)
-        throw new Error("Task are required")
+    if (completed === undefined || completed === null)
+        throw new Error("Completed are required")
     
     if (!description)
         throw new Error("Description are required")
 
-    return service.updateTask(taskId, userId, description, tagId);
+    return service.updateTask(taskId, userId, description, completed);
 }
 
 async function deleteTask(params) {

@@ -13,33 +13,29 @@ export default function Login() {
   const handleLogin = async () => {
     // TODO colocar um emoji em tela se é dia ou noite
     
-    const { status } = await Location.requestForegroundPermissionsAsync()
+    // const { status } = await Location.requestForegroundPermissionsAsync()
 
-    if (status !== 'granted') {
-      // sem acesso ao localizacao
-      alert(':(')
-      return
-    }
+    // if (status !== 'granted') {
+    //   alert('nao liberou acesso a localizacao')
+    //   return
+    // }
 
-    const { coords } = await Location.getCurrentPositionAsync()
-    // coords.latitude
-    // coords.longitude
-    
-    await SunriseSunsetService.getSunriseSunsetInfo(coords.latitude, coords.longitude)
-    
+    // const { coords } = await Location.getCurrentPositionAsync()
+    // await SunriseSunsetService.getSunriseSunsetInfo(coords.latitude, coords.longitude)
     
     // if (!user || !pass) {
     //   alert('Informe usuário e senha!')
     //   return
     // }
 
-    // try {
-    //   const { data } = await AuthService.authUser(user, pass)
-    //   router.push(`${data.ID}/todos`)
-    // } catch (ex) {
-    //   alert('Usuário ou senha inválidos!')
-    //   console.log(ex)
-    // }
+    try {
+      // const { data } = await AuthService.authUser(user, pass)
+      const { data } = await AuthService.authUser('usr', 'pwd')
+      router.push(`${data.ID}/todos`)
+    } catch (ex) {
+      alert('Usuário ou senha inválidos!')
+      console.log(ex)
+    }
   }
   
   return (
@@ -48,7 +44,7 @@ export default function Login() {
       <TextInput 
         placeholder='usuário'
         value={user}
-        onChangeText={txt => setUser(txt)}
+        onChangeText={setUser}
         style={styles.input}
       />
       <TextInput

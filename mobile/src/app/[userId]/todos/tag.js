@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import TagService from '../../../services/tag'
 
-export default function NewTask() {
+export default function NewTag() {
   const params = useLocalSearchParams()
 
   const [name, setName] = useState('')

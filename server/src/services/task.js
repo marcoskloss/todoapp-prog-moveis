@@ -12,7 +12,7 @@ async function getNextd() {
 
 async function create(description, tagId, userId) {
     if (tagId) {
-        tag = await tagService.findOne(tagId, userId)
+        const tag = await tagService.findOne(tagId, userId)
 
         if (!tag.data)
             throw new Error("Tag not found")
@@ -95,7 +95,7 @@ async function findOne(taskId, userId) {
     }
 }
 
-async function updateTask(taskId, userId, description, tagId) {
+async function updateTask(taskId, userId, description, completed) {
     let task = (await findOne(taskId, userId)).data; 
 
     if (!task || !task.ID)
@@ -104,23 +104,13 @@ async function updateTask(taskId, userId, description, tagId) {
             data: null
         }
         
-    let sql = `UPDATE TASK SET DESCRIPTION='${description}'`
-    
-    if (tagId){
-        const tag = await tagService.findOne(tagId, userId)
-    
-        if (!tag.data)
-            throw new Error("Tag not found")
-
-        sql += `, TAG_ID=${tagId}` 
-        task.TAG = tag.data
-    }
-    
-    sql += ` WHERE ID = ${taskId} AND USER_ID=${userId}` 
+    let sql = ` UPDATE TASK SET DESCRIPTION='${description}', COMPLETED='${completed ? 'S' : 'N'}'`
+    sql +=    ` WHERE ID = ${taskId} AND USER_ID=${userId} ` 
 
     await db.exec(sql);
 
     task.DESCRIPTION = description;
+    task.COMPLETED = completed;
 
     return {
         data: task
