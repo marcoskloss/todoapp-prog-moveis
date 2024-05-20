@@ -1,24 +1,22 @@
 const DEFAULT_TIMEZONE = 'America/Sao_Paulo'
 
-async function verifyPeriodOfDay(lat, lng) {
+export async function verifyPeriodOfDay(lat, lng) {
   const { sunrise, sunset } = await getSunriseSunsetInfo(lat, lng)
   const now = new Date()
   
   const hour = now.getHours()
   const minute = now.getMinutes()
 
-  // 'day' = now >= sunrise && now < sunset
-
-  if (hour >= sunrise.hours && hour < sunset.hours) {
+  if (sunrise.hour <= hour && hour < sunset.hour)
     return 'day'
-  }
 
-  if (hour === sunset.hours && minute < sunset.minutes) {
+  if (hour === sunset.hour && minute < sunset.minute)
     return 'day'
-  }
+
+  return 'night'
 }
 
-export async function getSunriseSunsetInfo(lat, lng) {
+async function getSunriseSunsetInfo(lat, lng) {
   console.log('buscando sunrise-sunset')
 
   // Ref: https://sunrise-sunset.org/api
@@ -38,13 +36,13 @@ export async function getSunriseSunsetInfo(lat, lng) {
 function timeAmPmTo24Hour(timeStr) {
   // Ex: "7:00:56 PM" -> "19:00:56" 
   const [time, suffix] = timeStr.split(' ')
-  let [hours, minutes, seconds] = time.split(':').map(Number)
+  let [hour, minute, second] = time.split(':').map(Number)
 
   if (suffix === 'PM') {
-    hours += 12
+    hour += 12
   }
 
-  return { hours, minutes, seconds }
+  return { hour, minute, second }
 }
 
-export default { getSunriseSunsetInfo }
+export default { verifyPeriodOfDay }
