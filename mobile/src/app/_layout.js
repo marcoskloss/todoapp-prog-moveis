@@ -56,7 +56,7 @@ export default function AppLayout() {
       <Text
         style={{
           position: "absolute",
-          bottom: 8,
+          bottom: 24,
           width: "100%",
           textAlign: "center",
           fontSize: 12,
