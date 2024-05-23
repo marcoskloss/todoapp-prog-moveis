@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 import { Link, router } from 'expo-router'
 import AuthService from '../services/auth'
+import Button from '../components/Button'
 
 export default function Login() {
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleLogin = async () => {
     if (!user || !pass) {
@@ -14,11 +16,14 @@ export default function Login() {
     }
 
     try {
+      setLoading(true)
       const { data } = await AuthService.authUser(user, pass)
       router.push(`${data.ID}/todos`)
     } catch (ex) {
       alert('Usuário ou senha inválidos!')
       console.log(ex)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -39,7 +44,7 @@ export default function Login() {
           style={styles.input}
           secureTextEntry
         />
-        <Button title='Entrar' onPress={handleLogin} />
+        <Button title="Entrar" onPress={handleLogin} isLoading={loading} />
         <Link href='/new-user'>Não possui uma conta?</Link>
       </View>
     </View>

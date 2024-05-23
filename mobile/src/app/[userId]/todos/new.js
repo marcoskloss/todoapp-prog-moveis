@@ -1,9 +1,10 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import TaskService from '../../../services/task'
 import TagService from '../../../services/tag'
 import { Picker } from '@react-native-picker/picker';
+import Button from '../../../components/Button'
 
 export default function NewTodo() {
   const params = useLocalSearchParams()
@@ -11,6 +12,7 @@ export default function NewTodo() {
   const [description, setDescription] = useState('')
   const [tagId, setTagId] = useState(null)
   const [tags, setTags] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const userId = Number(params.userId)
 
@@ -25,9 +27,11 @@ export default function NewTodo() {
       return
     }
 
+    setLoading(true)
     TaskService.create(description, tagId, userId)
       .then(() => router.push(`${userId}/todos`))
       .catch(alert)
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => {
@@ -76,7 +80,7 @@ export default function NewTodo() {
       
       <View style={styles.buttons}>
         <Link href={`${userId}/todos`} style={styles.back}>Voltar</Link>
-        <Button title="Salvar" style={styles.save} onPress={handleCreateTask} />
+        <Button title="Salvar" onPress={handleCreateTask} isLoading={loading} />
       </View>
     </SafeAreaView>
   )
@@ -123,8 +127,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
-  save: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  }
 });

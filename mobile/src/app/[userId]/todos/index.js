@@ -1,8 +1,9 @@
-import { Alert, Button, FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Alert, FlatList, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import { Feather } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import TaskService from '../../../services/task'
+import Button from '../../../components/Button'
 
 export default function Todos() {
   const [todos, setTodos] = useState([])

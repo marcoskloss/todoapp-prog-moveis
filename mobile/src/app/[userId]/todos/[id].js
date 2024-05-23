@@ -1,8 +1,9 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import Checkbox from 'expo-checkbox';
 import TaskService from '../../../services/task'
+import Button from '../../../components/Button'
 
 export default function Todo() {
   const params = useLocalSearchParams()
@@ -10,6 +11,7 @@ export default function Todo() {
   const [description, setDescription] = useState('')
   const [completed, setCompleted] = useState(false)
   const [tag, setTag] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const userId = Number(params.userId)
 
@@ -19,9 +21,11 @@ export default function Todo() {
       return
     }
 
+    setLoading(true)
     TaskService.updateTask(params.id, userId, description, completed)
       .then(() => router.push(`${userId}/todos`))
       .catch((ex) => alert(ex))
+      .finally(() => setLoading(false))
   }
 
   useEffect(() => {
@@ -71,7 +75,7 @@ export default function Todo() {
 
       <View style={styles.buttons}>
         <Link href={`${userId}/todos`} style={styles.back}>Voltar</Link>
-        <Button title="Salvar" style={styles.save} onPress={handleUpdateTask} />
+        <Button title="Salvar" onPress={handleUpdateTask} isLoading={loading} />
       </View>
     </SafeAreaView>
   )
@@ -118,8 +122,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
-  save: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  }
 });

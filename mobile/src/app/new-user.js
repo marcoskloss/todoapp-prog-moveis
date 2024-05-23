@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { Link, router } from 'expo-router';
 import AuthService from '../services/auth'
+import Button from '../components/Button'
 
 export default function NewUser() {
   const [user, setUser] = useState('')
   const [pass, setPass] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleCreateUser = async () => {
     if (!user.trim() || !pass.trim()) {
@@ -14,11 +16,14 @@ export default function NewUser() {
     }
 
     try {
+      setLoading(true)
       const { data } = await AuthService.createUser(user, pass)
       router.push(`/${data.ID}/todos`)
     } catch (ex) {
       alert('deu ruim! :/')
       console.log(ex)
+    } finally {
+      setLoading(false)
     }
   }
   
@@ -38,7 +43,7 @@ export default function NewUser() {
         style={styles.input}
         secureTextEntry
       />
-      <Button title='Criar' onPress={handleCreateUser} />
+      <Button title='Criar' onPress={handleCreateUser} isLoading={loading} />
       <Link href="/">Voltar</Link>
     </View>
   );

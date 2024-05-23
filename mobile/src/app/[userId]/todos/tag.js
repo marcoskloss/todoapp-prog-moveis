@@ -1,12 +1,14 @@
 import { Link, router, useLocalSearchParams } from "expo-router";
 import { useState } from "react";
-import { Button, SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, TextInput, View } from "react-native";
 import TagService from '../../../services/tag'
+import Button from '../../../components/Button'
 
 export default function NewTag() {
   const params = useLocalSearchParams()
 
   const [name, setName] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const userId = Number(params.userId)
   
@@ -16,9 +18,11 @@ export default function NewTag() {
       return
     }
 
+    setLoading(true)
     TagService.create(name, userId)
       .then(() => router.push(`${userId}/todos`))
       .catch((ex) => alert(ex))
+      .finally(() => setLoading(false))
   }
 
   return (
@@ -38,7 +42,7 @@ export default function NewTag() {
 
       <View style={styles.buttons}>
         <Link href={`${userId}/todos`} style={styles.back}>Voltar</Link>
-        <Button title="Salvar" style={styles.save} onPress={handleCreateTag} />
+        <Button title="Salvar" onPress={handleCreateTag} isLoading={loading} />
       </View>
     </SafeAreaView>
   )
@@ -85,8 +89,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
-  save: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  }
 });
